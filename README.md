@@ -5,6 +5,7 @@
 [![License: FSL-1.1-ALv2](https://img.shields.io/badge/License-FSL--1.1--ALv2-blue.svg)](./LICENSE.md)
 [![Built with Next.js 16](https://img.shields.io/badge/Next.js-16-black?logo=nextdotjs)](https://nextjs.org)
 [![Bun](https://img.shields.io/badge/runtime-Bun-fbf0df?logo=bun&logoColor=black)](https://bun.sh)
+[![skills.sh](https://skills.sh/b/drmrduck/nopoint)](https://skills.sh/drmrduck/nopoint)
 
 ### Pitch decks vibe coded — programmable React slides, an investor portal, and exportable runtimes.
 
@@ -122,6 +123,14 @@ Visit `/investors/login` and use one of the dev credentials (rendered on the log
 ### Bring your own deck
 
 Got an existing pitch deck? Don't try to import it as a file — attach it directly to your AI editor's chat (PDF / PPTX / Keynote export, or one screenshot per slide if the source is locked) and tell it to rebuild the deck as React components against the conventions in [AGENTS.md](./AGENTS.md). The hosted [/getting-started page](https://nopoint.app/getting-started) has a copy-pasteable prompt for exactly this.
+
+**Better: install the skill.** The `nopoint-bring-your-deck` skill choreographs the whole flow — clone, install, set up env, scaffold a new deck from your existing file, wire live data, and ship. Install it into Claude Code, Codex, or Cursor from any directory:
+
+```bash
+npx skills add drmrduck/nopoint --skill nopoint-bring-your-deck
+```
+
+Then just say *"set up nopoint and import my deck"* — the skill takes it from there. Listed at [skills.sh/drmrduck/nopoint](https://skills.sh/drmrduck/nopoint).
 
 ## Environment variables
 
