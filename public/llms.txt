@@ -1,0 +1,33 @@
+# NoPoint
+
+> NoPoint is an open-source runtime for building pitch decks as code. Slides are React components on a fixed 1280×720 design canvas, decks live in a registry, and an investor portal gates private decks behind a session cookie while keeping public decks freely shareable.
+
+NoPoint is built on Next.js 16 (App Router) and is designed to be cloned and edited with AI coding assistants (Claude Code, Cursor, Codex). The repo ships with a worked example seed deck, a Sequoia 10-slide template, recreations of historical decks (Airbnb 2009, Buffer 2013), and an information-memorandum template. Slide context (purpose, principles, what-it-is-not, story thread) is encoded directly on each slide so AI editors can read and edit without losing the deck's intent.
+
+## Project
+
+- [Homepage](https://nopoint.app/): What NoPoint is and the public deck library.
+- [Get started](https://nopoint.app/getting-started): Clone, run locally, and use Claude Code / Cursor / Codex to import an existing deck.
+- [GitHub repository](https://github.com/mewc/nopoint): Source code, issues, license.
+
+## Public decks
+
+- [Seed Round 2026](https://nopoint.app/investors/decks/seed-2026): NoPoint's own live seed pitch deck — the worked example for the format.
+- [Sequoia 10-Slide Template](https://nopoint.app/investors/decks/sequoia): Sequoia Capital's "writing a business plan" 10-slide framework as starter slides.
+- [AirBed & Breakfast — Seed 2009](https://nopoint.app/investors/decks/airbnb): Recreation of the original Airbnb seed deck for study.
+- [Buffer — Seed 2013](https://nopoint.app/investors/decks/buffer): Recreation of Buffer's seed deck.
+- [Chartpasta](https://nopoint.app/investors/decks/chartpasta): Companion deck for the Chartpasta / Chartcastr chart-embedding sub-product.
+- [RR Diner Situation Room](https://nopoint.app/investors/decks/rr-diner): Themed sample deck.
+
+## Conventions
+
+- Slides live under `components/decks/<deck-id>/slides/` as React components.
+- Each slide has an optional `context` field (`category`, `principles`, `goals`, `whatItIsNot`, `nailsThis`, `storyThread`) that the in-app Context widget reads at runtime — and that AI editors must keep honest when editing a slide.
+- Decks ship with `DECK.md` (principles, slide plan, hard rules) and `REFERENCES.md` (citation table).
+- Public decks are listed in `lib/decks/visibility.ts`. Anything not listed there stays gated behind investor credentials.
+- Slides are authored against a fixed 1280×720 canvas; the viewer scales to fit. Do not use Tailwind responsive prefixes inside slides.
+
+## Optional
+
+- [Repository AGENTS.md](https://github.com/mewc/nopoint/blob/master/AGENTS.md): Authoring conventions for AI assistants editing this codebase.
+- [README](https://github.com/mewc/nopoint/blob/master/README.md): User-facing overview.

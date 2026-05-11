@@ -1,0 +1,61 @@
+name: Bug report
+description: Something isn't working as expected
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: Plain-language summary of the bug.
+      placeholder: When I press G in the deck viewer, the grid renders empty cards.
+    validations:
+      required: true
+
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to reproduce
+      description: Numbered list. Be specific — credential used, deck id, slide.
+      placeholder: |
+        1. Sign in as demo@nopoint.dev
+        2. Open /investors/decks/seed-2026
+        3. Press G
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected vs actual
+      placeholder: Expected: live thumbnails. Actual: blank cards with only the slide number.
+    validations:
+      required: true
+
+  - type: input
+    id: deck
+    attributes:
+      label: Deck affected
+      placeholder: seed-2026 / airbnb / buffer / custom
+    validations:
+      required: false
+
+  - type: textarea
+    id: env
+    attributes:
+      label: Environment
+      description: Node/Bun version, OS, browser. `bun --version && node --version` is enough.
+      placeholder: |
+        Bun 1.1.34
+        Node 20.18.1
+        macOS 15.4
+        Chrome 130
+    validations:
+      required: true
+
+  - type: textarea
+    id: extra
+    attributes:
+      label: Anything else
+      description: Console errors, screenshots, network traces, related issues.
+    validations:
+      required: false
