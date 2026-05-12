@@ -25,7 +25,7 @@ const JSON_LD = {
             name: 'NoPoint',
             url: SITE_URL,
             logo: `${SITE_URL}/apple-touch-icon.png`,
-            sameAs: ['https://github.com/mewc/nopoint'],
+            sameAs: ['https://github.com/drmrduck/nopoint'],
         },
         {
             '@type': 'WebSite',

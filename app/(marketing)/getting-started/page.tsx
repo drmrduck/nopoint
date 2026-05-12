@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     },
 }
 
-const REPO_URL = 'https://github.com/mewc/nopoint'
+const REPO_URL = 'https://github.com/drmrduck/nopoint'
 
 const IMPORT_PROMPT = `I want to recreate my existing pitch deck in this nopoint repo, slide for slide.
 
@@ -493,7 +493,7 @@ export async function MrrSlide() {
                     </ol>
                     <div className="flex flex-wrap items-center gap-3">
                         <a
-                            href="https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fmewc%2Fnopoint&env=INVESTOR_SESSION_SECRET&envDescription=HMAC%20key%20for%20investor%20session%20cookies%20%E2%80%94%20generate%20with%20openssl%20rand%20-hex%2032&envLink=https%3A%2F%2Fgithub.com%2Fmewc%2Fnopoint%23environment&project-name=nopoint&repository-name=nopoint"
+                            href="https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fdrmrduck%2Fnopoint&env=INVESTOR_SESSION_SECRET&envDescription=HMAC%20key%20for%20investor%20session%20cookies%20%E2%80%94%20generate%20with%20openssl%20rand%20-hex%2032&envLink=https%3A%2F%2Fgithub.com%2Fdrmrduck%2Fnopoint%23environment&project-name=nopoint&repository-name=nopoint"
                             target="_blank"
                             rel="noopener noreferrer"
                             className="inline-flex items-center gap-2 h-10 px-4 rounded-lg bg-white text-black hover:bg-white/90 text-sm font-semibold transition-colors cursor-pointer select-none"
@@ -503,7 +503,7 @@ export async function MrrSlide() {
                             <ArrowRight className="w-3.5 h-3.5" />
                         </a>
                         <a
-                            href="https://railway.com/new?template=https%3A%2F%2Fgithub.com%2Fmewc%2Fnopoint"
+                            href="https://railway.com/new?template=https%3A%2F%2Fgithub.com%2Fdrmrduck%2Fnopoint"
                             target="_blank"
                             rel="noopener noreferrer"
                             className="inline-flex items-center gap-2 h-10 px-4 rounded-lg bg-[#1a1f2e] hover:bg-[#222837] border border-white/15 text-white text-sm font-semibold transition-colors cursor-pointer select-none"

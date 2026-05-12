@@ -225,7 +225,7 @@ export default async function InvestorsLandingPage() {
                     <span>
                         🛝 NoPoint is open source.{' '}
                         <a
-                            href="https://github.com/mewc/nopoint"
+                            href="https://github.com/drmrduck/nopoint"
                             target="_blank"
                             rel="noopener noreferrer"
                             className="underline hover:text-white/60"
