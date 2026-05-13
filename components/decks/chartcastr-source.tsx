@@ -76,8 +76,9 @@ export function ChartcastrSource({
                     className="block h-full w-full rounded-2xl object-contain"
                 />
             ) : error ? (
-                <div className="flex h-full w-full items-center justify-center rounded-2xl bg-neutral-100 text-sm text-neutral-500">
-                    Live source unavailable
+                <div className="flex h-full w-full flex-col items-center justify-center gap-3 rounded-2xl bg-neutral-100 text-sm text-neutral-500">
+                    <span className="text-6xl leading-none" aria-hidden="true">📊</span>
+                    <span>Live source unavailable</span>
                 </div>
             ) : (
                 <div className="h-full w-full animate-pulse rounded-2xl bg-neutral-100" />

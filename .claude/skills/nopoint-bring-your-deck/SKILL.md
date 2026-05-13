@@ -33,7 +33,7 @@ There are three phases. Do them in order. Don't skip to phase 2 until the dev se
 If the user hasn't cloned the repo yet, run the steps from `README.md` § "Get started in 60 seconds". Default to `bun`; fall back to `npm` if `bun` isn't on the path.
 
 ```bash
-git clone https://github.com/mewc/nopoint.git nopoint
+git clone https://github.com/drmrduck/nopoint.git nopoint
 cd nopoint
 bun install        # or: npm install
 cp .env.local.example .env.local
