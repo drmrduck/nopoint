@@ -1,6 +1,6 @@
 import Link from 'next/link'
 
-const REPO_URL = 'https://github.com/mewc/nopoint'
+const REPO_URL = 'https://github.com/drmrduck/nopoint'
 
 function GitHubMark({ className }: { className?: string }) {
     return (

@@ -98,7 +98,7 @@ Paste this into Claude Code, Cursor, or Codex from any folder. Your editor will 
 ```
 Set up the nopoint deck repo locally and start the dev server. Steps:
 
-1. git clone https://github.com/mewc/nopoint.git nopoint
+1. git clone https://github.com/drmrduck/nopoint.git nopoint
 2. cd nopoint
 3. bun install     (fall back to npm install if bun isn't available)
 4. cp .env.local.example .env.local
@@ -111,7 +111,7 @@ Then read README.md and AGENTS.md so you have context for what I ask next. Stop 
 ### Option B — by hand
 
 ```bash
-git clone https://github.com/mewc/nopoint.git nopoint
+git clone https://github.com/drmrduck/nopoint.git nopoint
 cd nopoint
 bun install                          # or: npm install
 cp .env.local.example .env.local     # fill in any keys you want
@@ -361,7 +361,7 @@ There is no Dockerfile committed — the standard Next.js `output: 'standalone'`
 
 ## Roadmap
 
-Rough order — issues with momentum jump the line. [Open an issue](https://github.com/mewc/nopoint/issues/new/choose) if something's missing.
+Rough order — issues with momentum jump the line. [Open an issue](https://github.com/drmrduck/nopoint/issues/new/choose) if something's missing.
 
 **Now** — in flight
 
@@ -387,7 +387,7 @@ Rough order — issues with momentum jump the line. [Open an issue](https://gith
 - [Code of Conduct](./CODE_OF_CONDUCT.md)
 - [Contributing guide](./CONTRIBUTING.md)
 - [Security policy](./SECURITY.md)
-- Issues & feature requests: [github.com/mewc/nopoint/issues](https://github.com/mewc/nopoint/issues)
+- Issues & feature requests: [github.com/drmrduck/nopoint/issues](https://github.com/drmrduck/nopoint/issues)
 
 ## License
 

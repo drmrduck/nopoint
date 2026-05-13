@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     },
 }
 
-const REPO_URL = 'https://github.com/mewc/nopoint'
+const REPO_URL = 'https://github.com/drmrduck/nopoint'
 
 const IMPORT_PROMPT = `I want to recreate my existing pitch deck in this nopoint repo, slide for slide.
 
