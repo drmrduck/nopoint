@@ -649,9 +649,14 @@ export function DeckViewer({ deckId, keyboardEnabled = true, embed = false }: De
             )}
 
             {/* Top-right widget rail: 3-dots options + live Controls + Context, all in one row.
-                In embed mode, only show while focused/controlled — otherwise the demo looks busy. */}
+                In embed mode, only show while focused/controlled — otherwise the demo looks busy.
+                On narrow viewports inside an embed, hide entirely so the small canvas isn't cluttered
+                with chrome — investors on phones get prev/next + tap zones, which is enough. */}
             {showChrome && (!embed || keyboardEnabled) && (
-                <div className="absolute top-4 right-4 z-40 flex items-start gap-2">
+                <div className={cx(
+                    'absolute top-4 right-4 z-40 items-start gap-2',
+                    embed ? 'hidden sm:flex' : 'flex',
+                )}>
                     <div className="relative">
                         <button
                             title="Options"
@@ -1001,23 +1006,27 @@ export function DeckViewer({ deckId, keyboardEnabled = true, embed = false }: De
                     </div>
                 )}
 
-                <ViewModeGroup
-                    current={viewMode}
-                    onChange={changeViewMode}
-                    fullscreen={fullscreen}
-                    onToggleFullscreen={toggleFullscreen}
-                    compact={embed}
-                />
+                {/* View-mode + slide-manager controls. Hidden on narrow viewports inside an
+                    embed so the cramped bottom bar only carries prev/next + slide count. */}
+                <div className={cx('items-center gap-2 sm:gap-3', embed ? 'hidden sm:flex' : 'flex')}>
+                    <ViewModeGroup
+                        current={viewMode}
+                        onChange={changeViewMode}
+                        fullscreen={fullscreen}
+                        onToggleFullscreen={toggleFullscreen}
+                        compact={embed}
+                    />
 
-                <button
-                    title="Slide manager"
-                    onClick={() => setManagerOpen((v) => !v)}
-                    className={`w-8 h-8 rounded-lg flex items-center justify-center text-white/60 hover:text-white transition-colors ${
-                        managerOpen ? 'bg-blue-500/20 text-blue-400' : 'bg-white/8 hover:bg-white/12'
-                    }`}
-                >
-                    <PanelRight className="w-4 h-4" />
-                </button>
+                    <button
+                        title="Slide manager"
+                        onClick={() => setManagerOpen((v) => !v)}
+                        className={`w-8 h-8 rounded-lg flex items-center justify-center text-white/60 hover:text-white transition-colors ${
+                            managerOpen ? 'bg-blue-500/20 text-blue-400' : 'bg-white/8 hover:bg-white/12'
+                        }`}
+                    >
+                        <PanelRight className="w-4 h-4" />
+                    </button>
+                </div>
             </div>
 
             {/* Slide manager drawer */}

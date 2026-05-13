@@ -128,9 +128,11 @@ export function HomepageDeckEmbed({ decks }: { decks: PublicDeckSummary[] }) {
                     embed
                 />
 
+                {/* Focus/hotkeys badge — hidden on narrow viewports where the
+                    canvas is cramped and hotkeys aren't usable anyway. */}
                 <div
                     className={
-                        'pointer-events-none absolute top-3 left-3 z-40 inline-flex items-center gap-1.5 rounded-full border bg-zinc-950/70 backdrop-blur px-2.5 h-7 text-[11px] font-medium transition-opacity duration-200 ' +
+                        'pointer-events-none absolute top-3 left-3 z-40 hidden sm:inline-flex items-center gap-1.5 rounded-full border bg-zinc-950/70 backdrop-blur px-2.5 h-7 text-[11px] font-medium transition-opacity duration-200 ' +
                         (focused
                             ? 'border-blue-500/40 text-blue-200 opacity-100'
                             : 'border-white/15 text-white/55 opacity-90')

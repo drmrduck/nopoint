@@ -117,9 +117,10 @@ export default function MarketingHome() {
                             Pitch decks vibe coded
                         </h1>
                         <p className="text-lg sm:text-xl text-white/65 max-w-2xl leading-relaxed">
-                            A private investor portal you actually own. Full
-                            npm under the hood, programmatic deck versions per
-                            investor, AI personalisation, and live data
+                            Run everything from your repo — now including
+                            pitch decks, built with full repo context. Full
+                            npm under the hood, programmatic deck versions
+                            per investor, AI personalisation, and live data
                             straight from your own systems. No copy-paste, no
                             drift.
                         </p>
