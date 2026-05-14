@@ -61,6 +61,19 @@ Before pointing a real investor at a deployment:
 - [ ] Serve over HTTPS. Cookie `Secure` flag flips on automatically in production but only matters if the connection is TLS.
 - [ ] Keep dependencies current — `bun update` periodically, or wire a Dependabot config.
 
+## Maintainer-side hardening (what runs on this repo)
+
+For anyone forking or auditing the project, this is what the upstream repo has switched on:
+
+- **CI in least-privilege mode** — `permissions: contents: read` at the top of every workflow, `persist-credentials: false` on checkout, third-party actions pinned to commit SHAs with a trailing version comment. See `.github/workflows/ci.yml`.
+- **CodeQL (security-extended queries)** on every push and PR, plus a weekly drift scan. Results land in the Security tab. See `.github/workflows/codeql.yml`.
+- **OSSF Scorecard** weekly + on push, publishing supply-chain hygiene results to the Security tab and `securityscorecards.dev`. See `.github/workflows/scorecard.yml`.
+- **Dependabot** weekly for npm + GitHub Actions, grouped to keep the queue small. Major upgrades for Next.js / React / Tailwind are excluded so they land via dedicated PRs. See `.github/dependabot.yml`.
+- **GitHub native protections** — secret scanning + push protection are enabled in repo settings (free for public repos). Pushing an API key matching a known provider pattern is blocked at the `git push` step before it ever lands.
+- **Private vulnerability reporting** — enabled. Use the **Security → Report a vulnerability** flow on the repo to file privately.
+
+If you fork into a private repo and these workflows fail for permission reasons, the most common culprits are the CodeQL/Scorecard `security-events: write` permission (needs to be allowed under Settings → Actions → Workflow permissions) and Scorecard's `id-token: write` (needs OIDC enabled, which is on by default for public repos).
+
 ## Credit
 
 We'll acknowledge reporters in release notes if you'd like to be named. Default is anonymous.

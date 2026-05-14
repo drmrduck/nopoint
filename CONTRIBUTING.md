@@ -45,6 +45,35 @@ NoPoint ships under [FSL-1.1-ALv2](./LICENSE.md). By submitting a contribution y
 
 This is in lieu of a separate CLA bot. If your employer's IP policy needs a more formal arrangement, email security@drummerduck.com and we'll work it out.
 
+## Releasing and versioning
+
+NoPoint follows [Semantic Versioning](https://semver.org/) for the public surface: the deck-authoring contract in `AGENTS.md` (`SlideDefinition`, `context`, `controls`, `variants`), the env-var contract in the README, and the route table under `app/`.
+
+Bump rules:
+
+- **PATCH** (`0.1.0 → 0.1.1`) — bug fixes, dependency updates, doc-only changes, internal refactors with no contract change.
+- **MINOR** (`0.1.0 → 0.2.0`) — backwards-compatible additions: new optional `SlideDefinition` fields, new env vars with safe defaults, new templates, new view modes, new export formats.
+- **MAJOR** (`0.x → 1.0`, `1.x → 2.0`) — breaking changes to the slide contract, removed env vars, renamed routes, or anything that forces a downstream fork to edit code on upgrade.
+
+Pre-1.0, MINOR bumps may carry small breaking changes — they will be called out in the release notes under a **Breaking** heading. Once we tag `v1.0.0`, breaking changes are MAJOR-only.
+
+### Cutting a release
+
+Only maintainers do this — contributors don't need to bump versions in their PRs.
+
+1. Land everything for the release on `main` via PR. CI must be green.
+2. Bump `version` in `package.json` to the new value. Commit on `main`: `chore: release v<x.y.z>`.
+3. Tag the commit with an annotated tag matching the version:
+
+   ```bash
+   git tag -a v<x.y.z> -m "v<x.y.z>" <commit-sha>
+   git push origin v<x.y.z>
+   ```
+
+4. Draft a GitHub Release from the tag. Group notes under **Added**, **Changed**, **Fixed**, **Security**, and a **Breaking** heading if anything broke. Credit reporters from `SECURITY.md` here if they asked to be named.
+
+Tags are immutable — once `v0.2.0` is pushed, it doesn't move. A bad release gets a new tag (`v0.2.1`), never a re-tag.
+
 ## Code of conduct
 
 This project follows the [Contributor Covenant](./CODE_OF_CONDUCT.md). Be respectful, assume good faith, and report concerns to security@drummerduck.com.
