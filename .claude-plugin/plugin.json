@@ -1,0 +1,12 @@
+{
+    "name": "nopoint",
+    "description": "Bring an existing pitch deck (PDF / PPTX / Keynote / screenshots) into the nopoint runtime — React-component slides, live data, exports to PDF/PPTX, shipped to your own domain.",
+    "version": "0.2.0",
+    "author": {
+        "name": "drmrduck",
+        "url": "https://github.com/drmrduck"
+    },
+    "homepage": "https://nopoint.app",
+    "repository": "https://github.com/drmrduck/nopoint",
+    "license": "FSL-1.1-ALv2"
+}
