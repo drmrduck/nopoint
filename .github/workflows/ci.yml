@@ -2,14 +2,40 @@ name: CI
 
 on:
   pull_request:
+    branches: [main, master]
+    paths-ignore:
+      - '**/*.md'
+      - 'LICENSE*'
+      - '.github/ISSUE_TEMPLATE/**'
+      - '.github/PULL_REQUEST_TEMPLATE.md'
   push:
-    branches: [master, main]
+    branches: [main, master]
+    paths-ignore:
+      - '**/*.md'
+      - 'LICENSE*'
+      - '.github/ISSUE_TEMPLATE/**'
+      - '.github/PULL_REQUEST_TEMPLATE.md'
+  workflow_dispatch:
+
+# Least-privilege default. Override per-job if a step needs more.
+permissions:
+  contents: read
+
+# Cancel superseded runs on the same ref to save CI minutes.
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
       - uses: oven-sh/setup-bun@v2
         with:

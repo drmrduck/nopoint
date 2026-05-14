@@ -382,12 +382,47 @@ Rough order — issues with momentum jump the line. [Open an issue](https://gith
 - Hosted multi-tenant — sign up and get `pitch.yourdomain.com` without self-hosting
 - Suggested-edit workflow — investors propose copy changes that a maintainer accepts
 
-## Community
+## Contributing
+
+Short version: open an issue first if it's substantial, keep PRs single-concern, make CI green. Full guide in [CONTRIBUTING.md](./CONTRIBUTING.md).
+
+### 1. Open an issue first
+
+Anything bigger than a typo, broken link, or one-line fix starts as an issue. This saves you from sinking time into a PR that's out of scope.
+
+- **Bug** — use the [Bug report](https://github.com/drmrduck/nopoint/issues/new?template=bug_report.yml) template. Include repro steps, expected vs actual, your Bun/Node/OS, and which deck reproduces it.
+- **Feature** — use the [Feature request](https://github.com/drmrduck/nopoint/issues/new?template=feature_request.yml) template. Lead with the *problem*, not the solution.
+- **Security** — do **not** open a public issue. Email `security@drummerduck.com` or use GitHub's private vulnerability reporting flow. See [SECURITY.md](./SECURITY.md).
+
+### 2. Submit a pull request
+
+Wait for an issue comment or thumbs-up before sinking real time in — bigger changes occasionally get redirected.
+
+1. **Fork** the repo and create a topic branch off `main`: `git checkout -b fix/grid-empty-cards`.
+2. **Read [`AGENTS.md`](./AGENTS.md)** before touching `components/decks/` — it's the slide-authoring contract and slide-context fields must stay honest.
+3. **Make the change.** One concern per PR. "Fix bug + refactor + add feature" gets bounced.
+4. **Run CI locally**: `bunx tsc --noEmit && bun run lint && bun run build`.
+5. **Open the PR**. The [PR template](./.github/PULL_REQUEST_TEMPLATE.md) has three short sections — fill them in. Reference the issue with `Closes #123`.
+6. **Make CI green.** Typecheck + lint + build run on every PR (`.github/workflows/ci.yml`). PRs from forks are sandboxed — no secrets are exposed to fork builds.
+7. **Address review comments** by pushing new commits to the same branch. Don't force-push after review has started.
+
+### What we look for
+
+- **Single-purpose diffs.** Easier to review, easier to revert.
+- **Honest `context` fields** on any slide you touch — see AGENTS.md.
+- **No new dependencies** without a reason in the PR description.
+- **No telemetry, no third-party auth, no shared state** added to the open-source core. Add it in your fork.
+
+### License of contributions
+
+NoPoint ships under [FSL-1.1-ALv2](./LICENSE.md). By submitting a contribution you agree your contribution is offered under the same terms and that the maintainer (Drummerduck Pty Ltd) may relicense it (including under more permissive terms) without further notice. Details in [CONTRIBUTING.md](./CONTRIBUTING.md#license-of-contributions).
+
+### Community
 
 - [Code of Conduct](./CODE_OF_CONDUCT.md)
-- [Contributing guide](./CONTRIBUTING.md)
+- [Contributing guide](./CONTRIBUTING.md) — the long form
 - [Security policy](./SECURITY.md)
-- Issues & feature requests: [github.com/drmrduck/nopoint/issues](https://github.com/drmrduck/nopoint/issues)
+- [Open an issue](https://github.com/drmrduck/nopoint/issues/new/choose)
 
 ## License
 
