@@ -2,6 +2,7 @@
 import { useState } from 'react'
 import { Check, Copy } from 'lucide-react'
 import { cn } from '@/lib/utils/cn'
+import posthog from 'posthog-js'
 
 interface CopyPromptButtonProps {
     prompt: string
@@ -24,6 +25,7 @@ export function CopyPromptButton({
             await navigator.clipboard.writeText(prompt)
             setCopied(true)
             setTimeout(() => setCopied(false), 1800)
+            posthog.capture('prompt_copied', { label })
         } catch {
             // ignore — clipboard may be unavailable in some sandboxes
         }

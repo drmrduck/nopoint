@@ -1,6 +1,7 @@
 'use client'
 import { useState } from 'react'
 import { Check, Link as LinkIcon, Lock, Share2 } from 'lucide-react'
+import posthog from 'posthog-js'
 
 interface CopyLinkButtonProps {
     /** Path or absolute URL to copy. Path is resolved against window.location.origin. */
@@ -37,6 +38,7 @@ export function CopyLinkButton({
             await navigator.clipboard.writeText(absolute)
             setCopied(true)
             setTimeout(() => setCopied(false), 1800)
+            posthog.capture('deck_link_copied', { href: absolute })
         } catch {
             // ignore — clipboard may be unavailable in some sandboxes
         }

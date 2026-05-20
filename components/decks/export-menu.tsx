@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { Loader2, ImageIcon, FileText, Presentation, FlaskConical } from 'lucide-react'
 import type { DeckDefinition, SlideDefinition } from './types'
 import { isLocalEnv } from '../../lib/utils/env'
+import posthog from 'posthog-js'
 
 interface Props {
     deck: DeckDefinition
@@ -123,6 +124,7 @@ export function ExportMenu({
             link.download = `${deck.id}-${title.toLowerCase().replace(/\s+/g, '-')}.${ext}`
             link.href = canvas.toDataURL(pickFormat(opts.quality), opts.quality)
             link.click()
+            posthog.capture('deck_exported', { format: 'png', deck_id: deck.id, slide_count: 1 })
         } finally {
             setJob(null)
         }
@@ -162,6 +164,7 @@ export function ExportMenu({
             }
 
             pdf.save(`${baseFilename}.pdf`)
+            posthog.capture('deck_exported', { format: 'pdf', deck_id: deck.id, slide_count: orderedEnabled.length })
         } finally {
             setJob(null)
         }
@@ -188,6 +191,7 @@ export function ExportMenu({
             }
 
             await pres.writeFile({ fileName: `${baseFilename}.pptx` })
+            posthog.capture('deck_exported', { format: 'pptx', deck_id: deck.id, slide_count: orderedEnabled.length })
         } finally {
             setJob(null)
         }
