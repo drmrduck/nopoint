@@ -1,4 +1,5 @@
 import type { MetadataRoute } from 'next'
+import { COMPARISONS } from '@/lib/comparisons'
 import { PUBLIC_DECK_IDS } from '@/lib/decks/visibility'
 import { SITE_URL } from '@/lib/site'
 
@@ -18,6 +19,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
             changeFrequency: 'weekly',
             priority: 0.9,
         },
+        {
+            url: `${SITE_URL}/vs`,
+            lastModified: now,
+            changeFrequency: 'monthly',
+            priority: 0.6,
+        },
     ]
 
     const deckRoutes: MetadataRoute.Sitemap = PUBLIC_DECK_IDS.map((id) => ({
@@ -27,5 +34,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
         priority: 0.7,
     }))
 
-    return [...staticRoutes, ...deckRoutes]
+    const comparisonRoutes: MetadataRoute.Sitemap = COMPARISONS.map((c) => ({
+        url: `${SITE_URL}/vs/${c.slug}`,
+        lastModified: now,
+        changeFrequency: 'monthly',
+        priority: 0.6,
+    }))
+
+    return [...staticRoutes, ...deckRoutes, ...comparisonRoutes]
 }

@@ -52,7 +52,7 @@ export default async function InvestorsLandingPage() {
                         <span className="font-headline text-lg font-bold tracking-tight">NoPoint</span>
                     </Link>
                 </div>
-                <div className="flex items-center justify-between flex-wrap gap-4 mb-12">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start mb-12">
                     <div>
                         <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-blue-400/80 mb-2">
                             Investors
@@ -60,12 +60,27 @@ export default async function InvestorsLandingPage() {
                         <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight">
                             Public decks
                         </h1>
-                        <p className="text-white/55 mt-3 max-w-2xl">
+                        <p className="text-white/55 mt-3">
                             Anyone with the URL can view these. Private decks live behind investor
                             credentials. Sign in to access them.
                         </p>
                     </div>
-                    <div className="flex flex-col items-end gap-3 max-w-xs w-full sm:w-auto">
+                    <aside className="rounded-2xl border border-blue-500/15 bg-gradient-to-br from-blue-500/8 via-blue-500/3 to-transparent p-6">
+                        <div className="flex items-start gap-3 mb-4">
+                            <div className="size-9 rounded-xl bg-blue-500/15 border border-blue-500/25 flex items-center justify-center shrink-0">
+                                <LockKeyhole className="size-4 text-blue-300" />
+                            </div>
+                            <div className="min-w-0">
+                                <h2 className="text-base font-semibold leading-tight">
+                                    {cred ? 'Signed in' : 'Have an investor login?'}
+                                </h2>
+                                <p className="text-white/55 text-sm mt-1 leading-snug">
+                                    {cred
+                                        ? 'Open the portal to see private partner-only decks.'
+                                        : 'Private decks (IMs, partner-only follow-ups, sensitive numbers) sit behind credentials.'}
+                                </p>
+                            </div>
+                        </div>
                         {cred ? (
                             <Link
                                 href="/investors/portal"
@@ -77,18 +92,20 @@ export default async function InvestorsLandingPage() {
                         ) : (
                             <Link
                                 href="/investors/login"
-                                className="inline-flex items-center gap-2 h-10 px-4 rounded-lg border border-blue-500/30 bg-blue-500/10 hover:bg-blue-500/20 text-blue-200 font-semibold transition-colors"
+                                className="inline-flex items-center gap-2 h-10 px-4 rounded-lg bg-blue-500 hover:bg-blue-600 text-white font-semibold transition-colors"
                             >
-                                <LockKeyhole className="size-4" />
                                 Investor sign-in
+                                <ArrowRight className="size-4" />
                             </Link>
                         )}
-                        <KarpathySocialProofProdOnly
-                            compact
-                            caption="vibe code slides as output here"
-                            className="w-64"
-                        />
-                    </div>
+                        <div className="mt-5 pt-5 border-t border-white/8">
+                            <KarpathySocialProofProdOnly
+                                compact
+                                caption="vibe code slides as output here"
+                                className="w-full"
+                            />
+                        </div>
+                    </aside>
                 </div>
 
                 <section>
@@ -187,35 +204,6 @@ export default async function InvestorsLandingPage() {
                                     </div>
                                 </Link>
                             ))}
-                        </div>
-                    </section>
-                )}
-
-                {!cred && (
-                    <section className="mt-16">
-                        <div className="rounded-2xl border border-blue-500/15 bg-gradient-to-br from-blue-500/8 via-blue-500/3 to-transparent p-8">
-                            <div className="flex items-start gap-4">
-                                <div className="size-10 rounded-xl bg-blue-500/15 border border-blue-500/25 flex items-center justify-center shrink-0">
-                                    <LockKeyhole className="size-5 text-blue-300" />
-                                </div>
-                                <div className="flex-1 min-w-0">
-                                    <h2 className="text-lg font-semibold mb-1">
-                                        Have a code?
-                                    </h2>
-                                    <p className="text-white/55 text-sm leading-relaxed mb-4">
-                                        Private decks (information memorandums, partner-only
-                                        follow-ups, sensitive numbers) live behind investor
-                                        credentials. Sign in to access yours.
-                                    </p>
-                                    <Link
-                                        href="/investors/login"
-                                        className="inline-flex items-center gap-2 h-9 px-3.5 rounded-lg bg-blue-500 hover:bg-blue-600 text-white text-sm font-semibold transition-colors"
-                                    >
-                                        Investor sign-in
-                                        <ArrowRight className="size-4" />
-                                    </Link>
-                                </div>
-                            </div>
                         </div>
                     </section>
                 )}

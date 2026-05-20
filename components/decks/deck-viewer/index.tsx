@@ -1,51 +1,43 @@
 'use client'
-import { createElement, useCallback, useEffect, useEffectEvent, useMemo, useRef, useState } from 'react'
-import Link from 'next/link'
+import { useCallback, useEffect, useEffectEvent, useMemo, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import {
+    ArrowLeft,
+    BookOpen,
     ChevronLeft,
     ChevronRight,
-    ChevronDown,
-    ArrowLeft,
-    Maximize,
-    Minimize,
-    MessageSquare,
-    Mail,
-    Home,
     Download,
+    Home,
+    Keyboard,
+    Loader2,
+    Lock,
+    LogOut,
+    Mail,
+    Maximize,
+    MessageSquare,
+    Minimize,
     MoreVertical,
     PanelRight,
-    Keyboard,
-    X,
     Send,
-    Loader2,
-    LayoutGrid,
-    Rows3,
-    Square,
-    Expand,
-    Smartphone,
-    LogOut,
-    BookOpen,
     Share2,
-    Lock,
 } from 'lucide-react'
-import { DECKS } from './index'
-import type { DeckChrome, DeckDefinition, SlideDefinition, SlideVariant } from './types'
-import { DeckManager } from './deck-manager'
-import { ExportMenu } from './export-menu'
-import { SlideContextWidget } from './slide-context-widget'
-import { SlideControlsWidget } from './slide-controls-widget'
-import { ChartcastrDialog } from './chartcastr-dialog'
-import { EmbedProvider } from '../../lib/decks/embed-context'
-import { isDevMode } from '../../lib/utils/env'
-import { prefetchChartcastrSources } from '../../lib/chartcastr/browser-cache'
-import { usePreferences } from '../../lib/preferences'
-import { PresenceLayer, usePresence } from '../multiplayer/presence-layer'
-import { IdentityBar } from '../multiplayer/identity-bar'
-import { ContactTooltip } from './contact-tooltip'
-import { LocalPromptBlock } from './local-prompt-block'
-import { PhoneFrame, ScaledStage, ScaledThumb } from './scaled-stage'
-import { SharePanel } from './share-panel'
+import { DECKS } from '../index'
+import type { DeckDefinition } from '../types'
+import { DeckManager } from '../deck-manager'
+import { ExportMenu } from '../export-menu'
+import { SlideContextWidget } from '../slide-context-widget'
+import { SlideControlsWidget } from '../slide-controls-widget'
+import { ChartcastrDialog } from '../chartcastr-dialog'
+import { EmbedProvider } from '../../../lib/decks/embed-context'
+import { isDevMode } from '../../../lib/utils/env'
+import { prefetchChartcastrSources } from '../../../lib/chartcastr/browser-cache'
+import { usePreferences } from '../../../lib/preferences'
+import { PresenceLayer, usePresence } from '../../multiplayer/presence-layer'
+import { IdentityBar } from '../../multiplayer/identity-bar'
+import { ContactTooltip } from '../contact-tooltip'
+import { LocalPromptBlock } from '../local-prompt-block'
+import { PhoneFrame, ScaledStage } from '../scaled-stage'
+import { SharePanel } from '../share-panel'
 import {
     loadSlideState,
     loadVariantChoices,
@@ -54,95 +46,25 @@ import {
     saveVariantChoices,
     saveViewMode,
     type SlideState,
-} from './viewer-state'
-import { SLIDE_DESIGN_HEIGHT, SLIDE_DESIGN_WIDTH, type ViewMode } from './viewer-types'
+} from '../viewer-state'
+import { SLIDE_DESIGN_HEIGHT, SLIDE_DESIGN_WIDTH, type ViewMode } from '../viewer-types'
+import { cx, resolveDeckChrome } from './utils'
+import { useReducedMotion } from './use-reduced-motion'
+import { COMMENT_FORWARDING_PROMPT } from './comment-forwarding-prompt'
+import { SlideContent } from './slide-content'
+import { SlideFrameChrome } from './slide-frame-chrome'
+import { ViewModeGroup } from './view-mode-group'
+import { VariantPicker } from './variant-picker'
+import { GridView } from './grid-view'
+import { ScrollView } from './scroll-view'
+import { EdgeNav } from './edge-nav'
+import { TopNavLink } from './top-nav-link'
+import { RailButton, RailPanel } from './rail'
+import { OptionsMenuItem } from './options-menu-item'
 
 type Panel = 'comment' | 'contact' | 'nav' | 'download' | 'options' | 'shortcuts' | 'share' | null
 
 const VIEW_MODES: ViewMode[] = ['card', 'full', 'grid', 'scroll', 'mobile']
-
-function cx(...classes: Array<string | false | null | undefined>) {
-    return classes.filter(Boolean).join(' ')
-}
-
-const COMMENT_FORWARDING_PROMPT = `I want to wire the in-deck comment system to actually notify me when an investor leaves a comment.
-
-File: app/api/investors/comment/route.ts
-Right now the route forwards to a Slack webhook if INVESTOR_COMMENTS_SLACK_WEBHOOK is set, otherwise it just logs to the server console. I want to extend it.
-
-Please ask me, one question at a time:
-1. Which channel(s) do you want comments to flow to? Pick any combination of:
-   - Slack incoming webhook
-   - Discord webhook
-   - Email (via Resend, SendGrid, or Postmark — ask which provider)
-   - n8n webhook (any custom workflow URL)
-   - A custom HTTPS endpoint (POST JSON)
-   - Just log to the server console (no notification)
-2. For each channel I picked, ask for the URL / API key / from-address / to-address as needed. Confirm the env var names you'll use, e.g. INVESTOR_COMMENTS_SLACK_WEBHOOK, INVESTOR_COMMENTS_DISCORD_WEBHOOK, INVESTOR_COMMENTS_RESEND_API_KEY, INVESTOR_COMMENTS_EMAIL_TO, INVESTOR_COMMENTS_N8N_URL, INVESTOR_COMMENTS_HTTP_URL.
-3. Should comments fire-and-forget (don't block the response) or wait for delivery confirmation before responding to the client? (Default: fire-and-forget.)
-4. For Slack and Discord, walk me through creating an incoming webhook if I don't already have one (https://api.slack.com/messaging/webhooks for Slack; Server Settings → Integrations → Webhooks for Discord).
-
-Then update app/api/investors/comment/route.ts to POST to all chosen channels in parallel, document each new env var in README.md, and add the keys to .env.local.example if it exists (create one if not).
-
-After my answers, apply the edits and confirm the diff.`
-
-function resolveDeckChrome(deck: DeckDefinition): DeckChrome {
-    return {
-        brandVisibleFromSlide: deck.chrome?.brandVisibleFromSlide ?? 1,
-        brand: deck.chrome?.brand ?? (
-            deck.logoUrl
-                ? {
-                    kind: 'image',
-                    src: deck.logoUrl,
-                    className: 'h-6 w-auto opacity-40',
-                }
-                : undefined
-        ),
-        slideNumber: {
-            enabled: deck.chrome?.slideNumber?.enabled ?? true,
-            format: deck.chrome?.slideNumber?.format ?? 'padded',
-            className:
-                deck.chrome?.slideNumber?.className ??
-                'text-xs font-semibold tracking-[0.32em] tabular-nums text-white/35',
-            containerClassName:
-                deck.chrome?.slideNumber?.containerClassName ??
-                'absolute top-5 right-16 pointer-events-none select-none z-20',
-            prefix: deck.chrome?.slideNumber?.prefix,
-            suffix: deck.chrome?.slideNumber?.suffix,
-        },
-        watermark: {
-            text: deck.chrome?.watermark?.text ?? `CONFIDENTIAL — ${deck.title}`,
-            className:
-                deck.chrome?.watermark?.className ??
-                'absolute bottom-4 right-5 text-[11px] text-white/20 pointer-events-none select-none z-20',
-        },
-    }
-}
-
-function useReducedMotion() {
-    const [reduced, setReduced] = useState(() =>
-        typeof window !== 'undefined'
-            ? window.matchMedia('(prefers-reduced-motion: reduce)').matches
-            : false,
-    )
-    useEffect(() => {
-        const mq = window.matchMedia('(prefers-reduced-motion: reduce)')
-        const handler = (e: MediaQueryListEvent) => setReduced(e.matches)
-        mq.addEventListener('change', handler)
-        return () => mq.removeEventListener('change', handler)
-    }, [])
-    return reduced
-}
-
-function resolveSlideComponent(slide: SlideDefinition, variantKey: string | undefined) {
-    if (variantKey && slide.variants?.[variantKey]) {
-        return slide.variants[variantKey].component
-    }
-    if (slide.defaultVariant && slide.variants?.[slide.defaultVariant]) {
-        return slide.variants[slide.defaultVariant].component
-    }
-    return slide.component
-}
 
 export interface DeckViewerProps {
     deckId: string
@@ -545,14 +467,14 @@ export function DeckViewer({ deckId, keyboardEnabled = true, embed = false }: De
                                         {multiplayerEnabled && currentSlideId && (
                                             <PresenceLayer presence={presence} slideId={currentSlideId} />
                                         )}
+                                        <SlideFrameChrome
+                                            deckChrome={deckChrome}
+                                            currentSlideNumber={currentSlideNumber}
+                                            slideNumberText={slideNumberText}
+                                            showNumber={prefs.showNumberWatermark && total > 0}
+                                            showWatermark={prefs.showConfidentialWatermark}
+                                        />
                                     </ScaledStage>
-                                    <SlideFrameChrome
-                                        deckChrome={deckChrome}
-                                        currentSlideNumber={currentSlideNumber}
-                                        slideNumberText={slideNumberText}
-                                        showNumber={prefs.showNumberWatermark && total > 0}
-                                        showWatermark={prefs.showConfidentialWatermark}
-                                    />
                                 </div>
                             ) : viewMode === 'mobile' ? (
                                 <PhoneFrame>
@@ -561,6 +483,13 @@ export function DeckViewer({ deckId, keyboardEnabled = true, embed = false }: De
                                         {multiplayerEnabled && currentSlideId && (
                                             <PresenceLayer presence={presence} slideId={currentSlideId} />
                                         )}
+                                        <SlideFrameChrome
+                                            deckChrome={deckChrome}
+                                            currentSlideNumber={currentSlideNumber}
+                                            slideNumberText={slideNumberText}
+                                            showNumber={prefs.showNumberWatermark && total > 0}
+                                            showWatermark={prefs.showConfidentialWatermark}
+                                        />
                                     </ScaledStage>
                                 </PhoneFrame>
                             ) : (
@@ -576,14 +505,14 @@ export function DeckViewer({ deckId, keyboardEnabled = true, embed = false }: De
                                         {multiplayerEnabled && currentSlideId && (
                                             <PresenceLayer presence={presence} slideId={currentSlideId} />
                                         )}
+                                        <SlideFrameChrome
+                                            deckChrome={deckChrome}
+                                            currentSlideNumber={currentSlideNumber}
+                                            slideNumberText={slideNumberText}
+                                            showNumber={prefs.showNumberWatermark && total > 0}
+                                            showWatermark={prefs.showConfidentialWatermark}
+                                        />
                                     </ScaledStage>
-                                    <SlideFrameChrome
-                                        deckChrome={deckChrome}
-                                        currentSlideNumber={currentSlideNumber}
-                                        slideNumberText={slideNumberText}
-                                        showNumber={prefs.showNumberWatermark && total > 0}
-                                        showWatermark={prefs.showConfidentialWatermark}
-                                    />
                                 </div>
                             )}
                         </motion.div>
@@ -1056,501 +985,5 @@ export function DeckViewer({ deckId, keyboardEnabled = true, embed = false }: De
             )}
         </div>
         </EmbedProvider>
-    )
-}
-
-function SlideContent({
-    slide,
-    variantKey,
-}: {
-    slide: SlideDefinition
-    variantKey: string | undefined
-}) {
-    return createElement(resolveSlideComponent(slide, variantKey))
-}
-
-function SlideFrameChrome({
-    deckChrome,
-    currentSlideNumber,
-    slideNumberText,
-    showNumber,
-    showWatermark,
-}: {
-    deckChrome: DeckChrome
-    currentSlideNumber: number
-    slideNumberText: string
-    showNumber: boolean
-    showWatermark: boolean
-}) {
-    const brandVisible = !!deckChrome.brand && currentSlideNumber >= (deckChrome.brandVisibleFromSlide ?? 1)
-    const slideNumberVisible = showNumber && deckChrome.slideNumber?.enabled !== false && !!deckChrome.slideNumber
-    const watermarkVisible = showWatermark && !!deckChrome.watermark?.text
-
-    if (!brandVisible && !slideNumberVisible && !watermarkVisible) return null
-
-    return (
-        <>
-            {brandVisible && (
-                <div
-                    className={cx(
-                        'absolute top-5 left-6 pointer-events-none select-none z-20',
-                        deckChrome.brand?.containerClassName,
-                    )}
-                >
-                    {deckChrome.brand?.kind === 'image' ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img
-                            src={deckChrome.brand.src}
-                            alt={deckChrome.brand.alt ?? ''}
-                            aria-hidden={deckChrome.brand.alt ? undefined : true}
-                            className={cx('h-6 w-auto', deckChrome.brand.className)}
-                        />
-                    ) : (
-                        <span
-                            className={cx(
-                                'text-xs font-semibold uppercase tracking-[0.28em] text-white/32',
-                                deckChrome.brand?.className,
-                            )}
-                        >
-                            {deckChrome.brand?.text}
-                        </span>
-                    )}
-                </div>
-            )}
-
-            {slideNumberVisible && deckChrome.slideNumber && (
-                <div className={deckChrome.slideNumber.containerClassName}>
-                    <span className={deckChrome.slideNumber.className}>
-                        {deckChrome.slideNumber.prefix}
-                        {slideNumberText}
-                        {deckChrome.slideNumber.suffix}
-                    </span>
-                </div>
-            )}
-
-            {watermarkVisible && (
-                <div className={deckChrome.watermark?.className}>
-                    {deckChrome.watermark?.text}
-                </div>
-            )}
-        </>
-    )
-}
-
-interface ModeItem {
-    key: 'card' | 'full' | 'grid' | 'scroll' | 'mobile' | 'screen'
-    icon: React.ReactNode
-    label: string
-    title: string
-    /** Hide this item on narrow viewports (< sm) to reclaim space. */
-    smOnly?: boolean
-}
-
-function ViewModeGroup({
-    current,
-    onChange,
-    fullscreen,
-    onToggleFullscreen,
-    compact = false,
-}: {
-    current: ViewMode
-    onChange: (m: ViewMode) => void
-    fullscreen: boolean
-    onToggleFullscreen: () => void
-    /** Render as an icon-only select dropdown instead of a button group. */
-    compact?: boolean
-}) {
-    const items: ModeItem[] = [
-        { key: 'card', icon: <Square className="w-3.5 h-3.5" />, label: 'Card', title: 'Card view (V)' },
-        { key: 'full', icon: <Expand className="w-3.5 h-3.5" />, label: 'Full', title: 'Full bleed (V)' },
-        { key: 'grid', icon: <LayoutGrid className="w-3.5 h-3.5" />, label: 'Grid', title: 'Grid view (G)' },
-        { key: 'scroll', icon: <Rows3 className="w-3.5 h-3.5" />, label: 'List', title: 'Scroll / list view (S)', smOnly: true },
-        { key: 'mobile', icon: <Smartphone className="w-3.5 h-3.5" />, label: 'Mobile', title: 'Mobile preview (P)' },
-        {
-            // Fullscreen is hidden on narrow viewports — the API has spotty
-            // mobile-browser support and the button is rarely useful there.
-            key: 'screen',
-            icon: fullscreen ? <Minimize className="w-3.5 h-3.5" /> : <Maximize className="w-3.5 h-3.5" />,
-            label: 'Screen',
-            title: fullscreen ? 'Exit fullscreen (F)' : 'Enter fullscreen (F)',
-            smOnly: true,
-        },
-    ]
-
-    function handle(key: ModeItem['key']) {
-        if (key === 'screen') onToggleFullscreen()
-        else onChange(key)
-    }
-
-    function isActive(key: ModeItem['key']) {
-        if (key === 'screen') return fullscreen
-        return current === key
-    }
-
-    if (compact) {
-        return (
-            <ViewModeSelect
-                items={items}
-                onPick={handle}
-                isActive={isActive}
-            />
-        )
-    }
-
-    return (
-        <div className="flex items-center gap-0.5 sm:gap-1 p-1 bg-white/5 rounded-lg">
-            {items.map((it) => {
-                const active = isActive(it.key)
-                return (
-                    <button
-                        key={it.key}
-                        title={it.title}
-                        onClick={() => handle(it.key)}
-                        className={cx(
-                            'h-7 flex items-center gap-1.5 rounded-md transition-all',
-                            it.smOnly && 'hidden sm:flex',
-                            active
-                                ? 'bg-blue-500/25 text-blue-200 px-1.5 w-7 justify-center'
-                                : 'px-1.5 sm:px-2.5 text-white/55 hover:text-white hover:bg-white/8',
-                        )}
-                    >
-                        {it.icon}
-                        {!active && (
-                            <span className="hidden sm:inline text-[11px] font-medium">{it.label}</span>
-                        )}
-                    </button>
-                )
-            })}
-        </div>
-    )
-}
-
-function ViewModeSelect({
-    items,
-    onPick,
-    isActive,
-}: {
-    items: ModeItem[]
-    onPick: (key: ModeItem['key']) => void
-    isActive: (key: ModeItem['key']) => boolean
-}) {
-    const [open, setOpen] = useState(false)
-    const wrapRef = useRef<HTMLDivElement>(null)
-    const current = items.find((i) => isActive(i.key)) ?? items[0]!
-
-    useEffect(() => {
-        if (!open) return
-        const onDoc = (e: MouseEvent) => {
-            if (!wrapRef.current?.contains(e.target as Node)) setOpen(false)
-        }
-        const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setOpen(false) }
-        document.addEventListener('mousedown', onDoc)
-        document.addEventListener('keydown', onKey)
-        return () => {
-            document.removeEventListener('mousedown', onDoc)
-            document.removeEventListener('keydown', onKey)
-        }
-    }, [open])
-
-    return (
-        <div ref={wrapRef} className="relative">
-            <button
-                type="button"
-                title={current.title}
-                aria-haspopup="listbox"
-                aria-expanded={open}
-                onClick={() => setOpen((v) => !v)}
-                className="h-8 inline-flex items-center gap-1.5 pl-2 pr-1.5 rounded-md border border-white/15 bg-white/[0.04] hover:border-white/30 hover:bg-white/[0.08] text-white/80 hover:text-white transition-colors"
-            >
-                {current.icon}
-                <span className="text-[11px] font-medium">{current.label}</span>
-                <ChevronDown className={cx('w-3.5 h-3.5 transition-transform', open && 'rotate-180')} />
-            </button>
-            {open && (
-                <div
-                    role="listbox"
-                    className="absolute bottom-full mb-2 right-0 z-40 min-w-[140px] rounded-lg border border-white/10 bg-zinc-900/95 backdrop-blur p-1 shadow-xl"
-                >
-                    {items.map((it) => {
-                        const active = isActive(it.key)
-                        return (
-                            <button
-                                key={it.key}
-                                role="option"
-                                aria-selected={active}
-                                title={it.title}
-                                onClick={() => { onPick(it.key); setOpen(false) }}
-                                className={cx(
-                                    'w-full flex items-center gap-2 px-2 h-8 rounded-md text-[11px] font-medium transition-colors',
-                                    active
-                                        ? 'bg-blue-500/25 text-blue-200'
-                                        : 'text-white/70 hover:text-white hover:bg-white/8',
-                                )}
-                            >
-                                <span className="w-4 inline-flex justify-center">{it.icon}</span>
-                                <span>{it.label}</span>
-                            </button>
-                        )
-                    })}
-                </div>
-            )}
-        </div>
-    )
-}
-
-function VariantPicker({
-    variants,
-    current,
-    onPick,
-}: {
-    variants: Record<string, SlideVariant>
-    current: string | undefined
-    onPick: (key: string) => void
-}) {
-    const entries = Object.entries(variants)
-    return (
-        <div className="absolute top-4 left-1/2 -translate-x-1/2 z-30 opacity-0 hover:opacity-100 focus-within:opacity-100 transition-opacity">
-            <div className="flex items-center bg-zinc-900/95 border border-white/10 rounded-lg overflow-hidden shadow-xl">
-                <span className="text-[10px] font-semibold text-white/30 uppercase tracking-wider px-3">
-                    Variant
-                </span>
-                {entries.map(([key, variant]) => (
-                    <button
-                        key={key}
-                        onClick={() => onPick(key)}
-                        className={`px-3 h-8 text-xs font-medium transition-colors ${
-                            current === key
-                                ? 'bg-blue-500/30 text-blue-200'
-                                : 'text-white/60 hover:text-white hover:bg-white/8'
-                        }`}
-                    >
-                        {variant.label}
-                    </button>
-                ))}
-            </div>
-        </div>
-    )
-}
-
-function GridView({
-    orderedEnabled,
-    slideMap,
-    variantChoices,
-    currentIdx,
-    onPick,
-}: {
-    orderedEnabled: string[]
-    slideMap: Record<string, SlideDefinition>
-    variantChoices: Record<string, string>
-    currentIdx: number
-    onPick: (idx: number) => void
-}) {
-    return (
-        <div className="absolute inset-0 overflow-y-auto p-6 pb-20">
-            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
-                {orderedEnabled.map((id, i) => {
-                    const slide = slideMap[id]
-                    if (!slide) return null
-                    const variantKey = variantChoices[id] ?? slide.defaultVariant
-                    return (
-                        <button
-                            key={id}
-                            onClick={() => onPick(i)}
-                            className={`group relative rounded-xl overflow-hidden border-2 transition-all text-left ${
-                                i === currentIdx
-                                    ? 'border-blue-500 shadow-xl shadow-blue-500/20'
-                                    : 'border-white/10 hover:border-white/30'
-                            }`}
-                        >
-                            <ScaledThumb>
-                                <SlideContent slide={slide} variantKey={variantKey} />
-                            </ScaledThumb>
-                            <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent px-3 py-2">
-                                <p className="text-xs text-white/40 tabular-nums">{i + 1}</p>
-                                <p className="text-sm text-white font-medium truncate">{slide.title}</p>
-                            </div>
-                        </button>
-                    )
-                })}
-            </div>
-        </div>
-    )
-}
-
-function ScrollView({
-    orderedEnabled,
-    slideMap,
-    variantChoices,
-    onPick,
-}: {
-    orderedEnabled: string[]
-    slideMap: Record<string, SlideDefinition>
-    variantChoices: Record<string, string>
-    onPick: (idx: number) => void
-}) {
-    return (
-        <div className="absolute inset-0 overflow-y-auto">
-            <div className="flex flex-col gap-4 p-4">
-                {orderedEnabled.map((id, i) => {
-                    const slide = slideMap[id]
-                    if (!slide) return null
-                    const variantKey = variantChoices[id] ?? slide.defaultVariant
-                    return (
-                        <button
-                            key={id}
-                            onDoubleClick={() => onPick(i)}
-                            className="group relative rounded-xl overflow-hidden border border-white/10 hover:border-white/30 transition-colors text-left"
-                            style={{ aspectRatio: '16 / 9' }}
-                        >
-                            <ScaledThumb>
-                                <SlideContent slide={slide} variantKey={variantKey} />
-                            </ScaledThumb>
-                            <div className="absolute top-3 left-3 text-xs font-semibold bg-black/60 backdrop-blur-sm rounded-md px-2 py-0.5 text-white/80 tabular-nums">
-                                {i + 1} — {slide.title}
-                            </div>
-                        </button>
-                    )
-                })}
-            </div>
-        </div>
-    )
-}
-
-function EdgeNav({
-    side,
-    smOnly,
-    disabled,
-    onTap,
-}: {
-    side: 'left' | 'right'
-    /**
-     * When true, the entire control hides on viewports >= sm. Used in
-     * card/full views where the bottom-bar prev/next button already covers
-     * the desktop case. In mobile-preview view we want it on every viewport.
-     */
-    smOnly: boolean
-    disabled: boolean
-    onTap: () => void
-}) {
-    if (disabled) return null
-    const isLeft = side === 'left'
-    return (
-        <button
-            type="button"
-            aria-label={isLeft ? 'Previous slide' : 'Next slide'}
-            onClick={onTap}
-            className={cx(
-                'absolute top-0 bottom-0 w-[28%] max-w-[180px] z-10 flex items-center group',
-                // Visible on touch viewports (no hover available); hidden by
-                // default on desktop and revealed on hover/focus.
-                'opacity-70 sm:opacity-0 sm:hover:opacity-100 sm:focus-visible:opacity-100 transition-opacity',
-                isLeft ? 'left-0 justify-start pl-2 sm:pl-3' : 'right-0 justify-end pr-2 sm:pr-3',
-                smOnly && 'sm:hidden',
-            )}
-        >
-            <span className="rounded-full p-2 bg-black/55 backdrop-blur-sm ring-1 ring-white/10 text-white/90 group-hover:bg-black/70 group-active:bg-blue-500/50 transition-colors">
-                {isLeft ? <ChevronLeft className="w-5 h-5" /> : <ChevronRight className="w-5 h-5" />}
-            </span>
-        </button>
-    )
-}
-
-function TopNavLink({
-    href,
-    title,
-    children,
-}: {
-    href: string
-    title: string
-    children: React.ReactNode
-}) {
-    return (
-        <Link
-            href={href}
-            title={title}
-            className="flex h-9 w-9 items-center justify-center rounded-xl border border-white/10 bg-black/40 text-white/55 transition-colors hover:bg-white/10 hover:text-white"
-        >
-            {children}
-        </Link>
-    )
-}
-
-function RailButton({
-    icon,
-    title,
-    active,
-    onClick,
-}: {
-    icon: React.ReactNode
-    title: string
-    active: boolean
-    onClick: () => void
-}) {
-    return (
-        <button
-            data-rail-button
-            title={title}
-            onClick={onClick}
-            className={`w-9 h-9 rounded-xl flex items-center justify-center transition-colors z-30 relative ${
-                active
-                    ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30'
-                    : 'bg-black/40 text-white/50 hover:text-white hover:bg-white/10 border border-white/10'
-            }`}
-        >
-            {icon}
-        </button>
-    )
-}
-
-function RailPanel({
-    children,
-    onClose,
-}: {
-    children: React.ReactNode
-    onClose: () => void
-}) {
-    return (
-        <motion.div
-            data-rail-panel
-            initial={{ opacity: 0, x: -8 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -8 }}
-            transition={{ duration: 0.15 }}
-            className="absolute left-14 top-1/2 -translate-y-1/2 w-72 bg-zinc-900/95 border border-white/10 rounded-2xl shadow-2xl p-4 z-30"
-        >
-            <button
-                onClick={onClose}
-                title="Close"
-                className="absolute top-3 right-3 w-6 h-6 rounded-md flex items-center justify-center text-white/30 hover:text-white hover:bg-white/10 transition-colors"
-            >
-                <X className="w-3.5 h-3.5" />
-            </button>
-            {children}
-        </motion.div>
-    )
-}
-
-function OptionsMenuItem({
-    icon,
-    label,
-    shortcut,
-    onClick,
-}: {
-    icon: React.ReactNode
-    label: string
-    shortcut?: string
-    onClick: () => void
-}) {
-    return (
-        <button
-            onClick={onClick}
-            className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-white/60 hover:text-white hover:bg-white/8 transition-colors"
-        >
-            <span className="text-white/40">{icon}</span>
-            <span className="flex-1 text-left">{label}</span>
-            {shortcut && (
-                <kbd className="text-xs text-white/20 font-mono">{shortcut}</kbd>
-            )}
-        </button>
     )
 }

@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useState, Suspense } from 'react'
 import { Lock, ShieldCheck, FlaskConical } from 'lucide-react'
+import posthog from 'posthog-js'
 
 export interface DevCred {
     username: string
@@ -42,8 +43,11 @@ function LoginFormInner({ devCreds }: Props) {
             const data = await res.json()
             if (!res.ok) {
                 setError(data.error ?? 'Invalid credentials')
+                posthog.capture('investor_login_failed', { username })
                 return
             }
+            posthog.identify(username, { username })
+            posthog.capture('investor_logged_in', { username })
             router.push(next)
         } catch {
             setError('Something went wrong. Try again.')

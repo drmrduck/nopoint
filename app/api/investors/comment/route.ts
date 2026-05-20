@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { requireInvestor } from '@/lib/investors/guard.server'
+import { getPostHogClient } from '@/lib/posthog-server'
 
 const SLACK_WEBHOOK = process.env.INVESTOR_COMMENTS_SLACK_WEBHOOK
 
@@ -69,6 +70,17 @@ export async function POST(req: NextRequest) {
             comment,
         })
     }
+
+    getPostHogClient()?.capture({
+        distinctId: cred.username,
+        event: 'investor_comment_submitted',
+        properties: {
+            deck_id: deckId,
+            slide_number: slideNumber,
+            slide_title: slideTitle,
+            username: cred.username,
+        },
+    })
 
     return NextResponse.json({ success: true })
 }
