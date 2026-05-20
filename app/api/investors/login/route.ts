@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { checkCredentials } from '@/lib/investors/auth.server'
 import { signSession } from '@/lib/investors/session.server'
+import { getPostHogClient } from '@/lib/posthog-server'
 
 const LOGIN_RATE_LIMIT = new Map<string, { count: number; resetAt: number }>()
 const RATE_WINDOW_MS = 60_000
@@ -45,6 +46,11 @@ export async function POST(req: NextRequest) {
 
     const cred = checkCredentials(username, password)
     if (!cred) {
+        getPostHogClient()?.capture({
+            distinctId: username,
+            event: 'investor_login_rejected',
+            properties: { username },
+        })
         return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 })
     }
 
@@ -63,6 +69,10 @@ export async function POST(req: NextRequest) {
         path: '/',
         maxAge: 60 * 60,
     })
+
+    const posthog = getPostHogClient()
+    posthog?.identify({ distinctId: cred.username, properties: { username: cred.username, display_name: cred.displayName } })
+    posthog?.capture({ distinctId: cred.username, event: 'investor_login_succeeded', properties: { username: cred.username } })
 
     console.log(`[investors] Login: ${cred.username} from ${ip}`)
     return res
