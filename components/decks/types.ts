@@ -86,6 +86,14 @@ export interface DeckDefinition {
     title: string
     description: string
     slides: SlideDefinition[]
+    /**
+     * `'live'` marks the one canonical, data-wired demonstrator deck — the one
+     * that shows nopoint "for real" (live Chartcastr data, the full runtime).
+     * Everything else is `'example'` (a reference template, recreation, or gag).
+     * Defaults to `'example'` when omitted. The deck library and homepage use
+     * this to feature the live deck and group the rest under "Examples".
+     */
+    kind?: 'live' | 'example'
     logoUrl?: string
     pdfFilename?: string
     contact?: DeckContact

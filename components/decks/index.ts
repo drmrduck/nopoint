@@ -22,7 +22,8 @@ const DECK_REGISTRY: DeckDefinition[] = [
     {
         id: 'seed-2026',
         title: 'Seed Round 2026',
-        description: 'Live pitch deck for the seed raise.',
+        description: 'Live pitch deck for the seed raise — wired to live Chartcastr data.',
+        kind: 'live',
         slides: SEED_2026,
         pdfFilename: 'nopoint-seed-2026.pdf',
         contact: DEFAULT_CONTACT,
