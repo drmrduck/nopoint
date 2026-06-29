@@ -44,14 +44,14 @@ const gelasio = localFont({
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title: "🛝 NoPoint — Pitch decks as code",
-  description: "🛝 NoPoint — All POWER. Pitch decks as code: programmable slides, investor portals, and exportable presentation runtimes.",
+  title: "🛝 NoPoint — Open-source pitch decks as code",
+  description: "🛝 NoPoint — the open-source core for pitch decks as code: programmable slides, investor portals, and exportable presentation runtimes. Self-host it, or run the managed cloud.",
   alternates: {
     canonical: "/",
   },
   openGraph: {
-    title: "🛝 NoPoint — Pitch decks as code",
-    description: "All POWER. Build slide decks as code, present them live, and export to PNG, PDF, or PPTX.",
+    title: "🛝 NoPoint — Open-source pitch decks as code",
+    description: "Open source: build slide decks as code, present them live, and export to PNG, PDF, or PPTX. Self-host the core, or run the managed cloud.",
     url: SITE_URL,
     siteName: "🛝 NoPoint",
   },
