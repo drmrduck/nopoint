@@ -3,6 +3,7 @@ import { ArrowRight, BookOpen, Cloud, GitFork, Server, Sparkles, Terminal } from
 import { DECKS } from '@/components/decks'
 import { HomepageDeckEmbed } from '@/components/homepage-deck-embed'
 import { KarpathySocialProof } from '@/components/karpathy-social-proof'
+import { SkillInstall } from '@/components/skill-install'
 import { SITE_URL } from '@/lib/site'
 
 const HOMEPAGE_DECK_IDS = ['seed-2026', 'buffer', 'airbnb'] as const
@@ -265,6 +266,12 @@ export default function MarketingHome() {
                                 </div>
                             </div>
                         </div>
+                    </div>
+                </section>
+
+                <section className="px-4 sm:px-6 pb-16 sm:pb-24">
+                    <div className="mx-auto w-full max-w-3xl">
+                        <SkillInstall />
                     </div>
                 </section>
 
