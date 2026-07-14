@@ -60,6 +60,7 @@ export default function MarketingHome() {
             id: d.id,
             title: d.title,
             slideCount: d.slides.length,
+            kind: d.kind ?? 'example',
         }))
 
     return (

@@ -8,6 +8,7 @@ interface PublicDeckSummary {
     id: string
     title: string
     slideCount: number
+    kind?: 'live' | 'example'
 }
 
 export function HomepageDeckEmbed({ decks }: { decks: PublicDeckSummary[] }) {
@@ -168,6 +169,16 @@ export function HomepageDeckEmbed({ decks }: { decks: PublicDeckSummary[] }) {
                                         : 'bg-white/[0.04] text-white/60 hover:bg-white/[0.08] hover:text-white border border-white/10')
                                 }
                             >
+                                {d.kind === 'live' && (
+                                    <span
+                                        className="relative flex h-1.5 w-1.5"
+                                        aria-label="Live data"
+                                        title="Wired to live data"
+                                    >
+                                        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400/70" />
+                                        <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-400" />
+                                    </span>
+                                )}
                                 {d.title}
                                 <span
                                     className={

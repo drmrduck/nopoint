@@ -29,6 +29,8 @@ Have all the power and speed of vibecoding your pitch deck, self host it within 
 
 The bet: there's room for a better deck workflow for people who want version-controlled slide logic, deep programmatic control, fast Claude Code / Codex iteration, and a shareable visual snapshot that opens in PowerPoint and Google Slides when someone asks for the file.
 
+**You own the output.** Every deck is just a git repo of React components — no proprietary format, no lock-in, no vendor holding your slides hostage. Self-host it on your own domain, fork it, or let your AI rewrite it slide by slide. Nothing here phones home. That's the whole point.
+
 ## What ships
 
 - **Investor portal** — auth-gated landing at `/investors/portal`, hardcoded credentials, HMAC-signed session cookie, no third-party auth.
@@ -36,7 +38,7 @@ The bet: there's room for a better deck workflow for people who want version-con
 - **Deck viewer** — full-viewport runtime with five view modes (card / full / grid / scroll / mobile preview), keyboard hotkeys, slide manager drawer, comment forwarding, three-format export. Slides render against a fixed 1280×720 design canvas and CSS-scale to fit any viewport — mobile included.
 - **Slide runtime** — typed `SlideDefinition` shape with optional `context` (for the in-deck SlideContextWidget), `controls` (LOCAL yellow box for live-tunable widgets), and `variants` (runtime A/B swap with a button-group).
 - **Storytelling shell** — tabbed long-form narrative viewer for material that doesn't fit a slide. Stub-only by design — extend by adding tabs.
-- **Templates** — three deck types ship as starting points: YC pitch (`seed-2026`, 11 slides), Sequoia (10), Information Memorandum (~30), plus two gag decks (`chartpasta`, `rr-diner`).
+- **Decks — one live, the rest examples** — `seed-2026` (11 slides) is the `kind: 'live'` demonstrator, wired to live Chartcastr data and featured in the deck library. Everything else is an `example` to fork from: templates (Sequoia, Information Memorandum), famous-deck recreations (Airbnb, Buffer), and two gags (`chartpasta`, `rr-diner`).
 
 ## Integrations
 
